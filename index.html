@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Electrical & Electronics Engineering Quiz</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+                url("https://images.unsplash.com/photo-1473341304170-971dccb5ac1e")
+                center/cover fixed;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(20, 20, 20, 0.96);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #00d4ff;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #ddd;
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-box {
+            background: #252525;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .info-box span {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #444;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #00d4ff;
+            transition: width 0.3s;
+        }
+
+        .question {
+            font-size: 22px;
+            font-weight: bold;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .answers {
+            display: grid;
+            gap: 15px;
+        }
+
+        .answer {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #555;
+            border-radius: 12px;
+            background: #222;
+            color: white;
+            cursor: pointer;
+            font-size: 17px;
+            text-align: left;
+            transition: 0.3s;
+        }
+
+        .answer:hover {
+            background: #333;
+            border-color: #00d4ff;
+        }
+
+        .answer.correct {
+            background: #176b3a;
+            border-color: #32ff85;
+        }
+
+        .answer.wrong {
+            background: #7a1f1f;
+            border-color: #ff4d4d;
+        }
+
+        .answer:disabled {
+            cursor: not-allowed;
+        }
+
+        .next-btn,
+        .restart-btn {
+            display: block;
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: #00a8cc;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .next-btn:hover,
+        .restart-btn:hover {
+            background: #008aaa;
+        }
+
+        .result {
+            text-align: center;
+            display: none;
+        }
+
+        .result h2 {
+            font-size: 32px;
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 50px;
+            font-weight: bold;
+            margin: 20px;
+            color: #32ff85;
+        }
+
+        .message {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .quiz-container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .question {
+                font-size: 19px;
+            }
+
+            .answer {
+                font-size: 15px;
+                padding: 14px;
+            }
+
+            .info {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container">
+
+    <div id="quiz">
+
+        <div class="header">
+            <h1>⚡ Electrical & Electronics Engineering Quiz</h1>
+            <p>Test your engineering knowledge!</p>
+        </div>
+
+        <div class="info">
+            <div class="info-box">
+                Question: <span id="question-number">1</span>
+            </div>
+
+            <div class="info-box">
+                Score: <span id="score">0</span>
+            </div>
+
+            <div class="info-box">
+                Time: <span id="timer">30</span>s
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+
+        <div id="question" class="question"></div>
+
+        <div id="answers" class="answers"></div>
+
+        <button id="next-btn" class="next-btn hidden">
+            Next Question →
+        </button>
+
+    </div>
+
+    <div id="result" class="result">
+
+        <h2>Quiz Completed!</h2>
+
+        <div class="score">
+            <span id="final-score">0</span> / <span id="total-score">0</span>
+        </div>
+
+        <p id="message" class="message"></p>
+
+        <button class="restart-btn" onclick="restartQuiz()">
+            🔄 Play Again
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const questions = [
+
+    {
+        question: "What is the unit of electrical resistance?",
+        answers: [
+            "Volt",
+            "Ampere",
+            "Ohm",
+            "Watt"
+        ],
+        correct: "Ohm"
+    },
+
+    {
+        question: "Which device is used to measure electric current?",
+        answers: [
+            "Voltmeter",
+            "Ammeter",
+            "Ohmmeter",
+            "Wattmeter"
+        ],
+        correct: "Ammeter"
+    },
+
+    {
+        question: "What is the SI unit of electrical power?",
+        answers: [
+            "Joule",
+            "Watt",
+            "Volt",
+            "Ampere"
+        ],
+        correct: "Watt"
+    },
+
+    {
+        question: "Which component stores electrical energy in an electric field?",
+        answers: [
+            "Resistor",
+            "Inductor",
+            "Capacitor",
+            "Diode"
+        ],
+        correct: "Capacitor"
+    },
+
+    {
+        question: "Which component stores energy in a magnetic field?",
+        answers: [
+            "Capacitor",
+            "Resistor",
+            "Inductor",
+            "Transistor"
+        ],
+        correct: "Inductor"
+    },
+
+    {
+        question: "What is the main function of a transformer?",
+        answers: [
+            "Convert AC to DC",
+            "Change AC voltage level",
+            "Store electrical energy",
+            "Measure current"
+        ],
+        correct: "Change AC voltage level"
+    },
+
+    {
+        question: "Which semiconductor device allows current to flow mainly in one direction?",
+        answers: [
+            "Transistor",
+            "Diode",
+            "Capacitor",
+            "Relay"
+        ],
+        correct: "Diode"
+    },
+
+    {
+        question: "What is the approximate frequency of AC mains supply in Kenya?",
+        answers: [
+            "25 Hz",
+            "40 Hz",
+            "50 Hz",
+            "60 Hz"
+        ],
+        correct: "50 Hz"
+    },
+
+    {
+        question: "Which law states that V = IR?",
+        answers: [
+            "Kirchhoff's Law",
+            "Ohm's Law",
+            "Faraday's Law",
+            "Lenz's Law"
+        ],
+        correct: "Ohm's Law"
+    },
+
+    {
+        question: "Which instrument is used to measure voltage?",
+        answers: [
+            "Ammeter",
+            "Voltmeter",
+            "Wattmeter",
+            "Frequency meter"
+        ],
+        correct: "Voltmeter"
+    },
+
+    {
+        question: "Which logic gate produces HIGH output only when all inputs are HIGH?",
+        answers: [
+            "OR",
+            "NOT",
+            "AND",
+            "XOR"
+        ],
+        correct: "AND"
+    },
+
+    {
+        question: "What does LED stand for?",
+        answers: [
+            "Light Electrical Device",
+            "Light Emitting Diode",
+            "Low Energy Diode",
+            "Light Electronic Display"
+        ],
+        correct: "Light Emitting Diode"
+    },
+
+    {
+        question: "Which component is commonly used to limit current in a circuit?",
+        answers: [
+            "Resistor",
+            "Capacitor",
+            "Transformer",
+            "Switch"
+        ],
+        correct: "Resistor"
+    },
+
+    {
+        question: "What type of current periodically changes direction?",
+        answers: [
+            "DC",
+            "AC",
+            "Static current",
+            "Constant current"
+        ],
+        correct: "AC"
+    },
+
+    {
+        question: "Which device converts AC into DC?",
+        answers: [
+            "Inverter",
+            "Transformer",
+            "Rectifier",
+            "Oscillator"
+        ],
+        correct: "Rectifier"
+    }
+
+];
+
+
+let currentQuestion = 0;
+let score = 0;
+let timeLeft = 30;
+let timer;
+
+
+const questionElement = document.getElementById("question");
+const answersElement = document.getElementById("answers");
+const nextButton = document.getElementById("next-btn");
+const scoreElement = document.getElementById("score");
+const questionNumberElement =
+    document.getElementById("question-number");
+const timerElement = document.getElementById("timer");
+const progressElement = document.getElementById("progress");
+
+
+function startQuiz() {
+
+    currentQuestion = 0;
+    score = 0;
+
+    scoreElement.textContent = score;
+
+    showQuestion();
+
+}
+
+
+function showQuestion() {
+
+    clearInterval(timer);
+
+    timeLeft = 30;
+    timerElement.textContent = timeLeft;
+
+    startTimer();
+
+    const question = questions[currentQuestion];
+
+    questionElement.textContent = question.question;
+
+    questionNumberElement.textContent =
+        `${currentQuestion + 1}/${questions.length}`;
+
+    progressElement.style.width =
+        `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+    answersElement.innerHTML = "";
+
+    nextButton.classList.add("hidden");
+
+    question.answers.forEach(answer => {
+
+        const button = document.createElement("button");
+
+        button.classList.add("answer");
+
+        button.textContent = answer;
+
+        button.addEventListener("click", () => {
+            selectAnswer(button, answer);
+        });
+
+        answersElement.appendChild(button);
+
+    });
+
+}
+
+
+function selectAnswer(button, answer) {
+
+    clearInterval(timer);
+
+    const correctAnswer =
+        questions[currentQuestion].correct;
+
+    const allAnswers =
+        document.querySelectorAll(".answer");
+
+    allAnswers.forEach(btn => {
+        btn.disabled = true;
+
+        if (btn.textContent === correctAnswer) {
+            btn.classList.add("correct");
+        }
+    });
+
+    if (answer === correctAnswer) {
+
+        button.classList.add("correct");
+
+        score++;
+
+        scoreElement.textContent = score;
+
+    } else {
+
+        button.classList.add("wrong");
+
+    }
+
+    nextButton.classList.remove("hidden");
+
+}
+
+
+function startTimer() {
+
+    timer = setInterval(() => {
+
+        timeLeft--;
+
+        timerElement.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+
+            clearInterval(timer);
+
+            const correctAnswer =
+                questions[currentQuestion].correct;
+
+            document.querySelectorAll(".answer")
+                .forEach(button => {
+
+                    button.disabled = true;
+
+                    if (button.textContent === correctAnswer) {
+                        button.classList.add("correct");
+                    }
+
+                });
+
+            nextButton.classList.remove("hidden");
+
+        }
+
+    }, 1000);
+
+}
+
+
+nextButton.addEventListener("click", () => {
+
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+
+        showQuestion();
+
+    } else {
+
+        showResult();
+
+    }
+
+});
+
+
+function showResult() {
+
+    clearInterval(timer);
+
+    document.getElementById("quiz")
+        .style.display = "none";
+
+    document.getElementById("result")
+        .style.display = "block";
+
+    document.getElementById("final-score")
+        .textContent = score;
+
+    document.getElementById("total-score")
+        .textContent = questions.length;
+
+
+    const percentage =
+        (score / questions.length) * 100;
+
+
+    let message;
+
+
+    if (percentage >= 80) {
+
+        message = "Excellent! You have strong Electrical & Electronics knowledge.";
+
+    } else if (percentage >= 60) {
+
+        message = "Good job! Keep practicing to improve your skills.";
+
+    } else if (percentage >= 40) {
+
+        message = "Fair attempt. More revision will help you improve.";
+
+    } else {
+
+        message = "Keep learning! Review the basic electrical concepts and try again.";
+
+    }
+
+
+    document.getElementById("message")
+        .textContent = message;
+
+}
+
+
+function restartQuiz() {
+
+    document.getElementById("quiz")
+        .style.display = "block";
+
+    document.getElementById("result")
+        .style.display = "none";
+
+    startQuiz();
+
+}
+
+
+startQuiz();
+
+</script>
+
+</body>
+</html>
